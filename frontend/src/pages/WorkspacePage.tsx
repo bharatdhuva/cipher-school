@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Editor from '@monaco-editor/react';
 import { 
   ArrowLeft, 
   Send, 
@@ -11,7 +12,9 @@ import {
   ThumbsUp, 
   CheckSquare,
   Award,
-  Zap
+  Zap,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { api } from '../api';
 import type { Problem, Attempt, SubmissionPayload, EvaluationResult } from '../api';
@@ -39,7 +42,14 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
 }) => {
   const learnerId = useLearnerId();
   const [format, setFormat] = useState<SubmissionFormatType>('code');
+  const [editorTheme, setEditorTheme] = useState<'vs-dark' | 'vs'>('vs-dark');
   const [code, setCode] = useState('');
+
+  const getEditorLanguage = (fmt: SubmissionFormatType) => {
+    if (fmt === 'code') return 'java';
+    if (fmt === 'diagram') return 'markdown';
+    return 'markdown';
+  };
   const [status, setStatus] = useState<'draft' | 'submitting' | 'evaluating' | 'evaluated' | 'fallback' | 'failed'>('draft');
   const [evalStep, setEvalStep] = useState(1);
   const [evalResult, setEvalResult] = useState<EvaluationResult | null>(null);
@@ -323,61 +333,135 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
           <section className="lg:col-span-7 space-y-6">
             
             {/* Editor Card */}
-            <div className="bg-white border border-slate-200 rounded-[8px] shadow-soft overflow-hidden flex flex-col">
+            <div className={`border ${editorTheme === 'vs-dark' ? 'bg-[#1e1e1e] border-[#333333]' : 'bg-white border-slate-200'} rounded-[8px] shadow-soft overflow-hidden flex flex-col transition-colors`}>
               
               {/* Editor Header & Format Switcher */}
-              <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div className={`px-4 py-2.5 ${editorTheme === 'vs-dark' ? 'bg-[#18181b] border-b border-[#27272a]' : 'bg-slate-50 border-b border-slate-200'} flex flex-wrap items-center justify-between gap-2 transition-colors`}>
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
                   <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-                  <span className="text-xs font-mono text-slate-500 ml-2 font-medium">
+                  <span className={`text-xs font-mono font-medium ml-2 ${editorTheme === 'vs-dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                     {format === 'code' ? 'Solution.java (Class Abstractions)' : format === 'text' ? 'DesignSpec.md' : 'Model.mermaid'}
                   </span>
                 </div>
 
-                <div className="flex items-center bg-slate-200/70 p-0.5 rounded-[6px] text-xs font-medium" role="tablist">
-                  <button 
-                    type="button" 
-                    onClick={() => setFormat('code')}
-                    className={`px-2.5 py-1 rounded-[4px] ${format === 'code' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'} transition-all`}
+                <div className="flex items-center gap-2">
+                  {/* Theme Switcher */}
+                  <button
+                    type="button"
+                    onClick={() => setEditorTheme(prev => prev === 'vs-dark' ? 'vs' : 'vs-dark')}
+                    title="Toggle VS Code Light / Dark Theme"
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] text-xs font-medium transition-all ${
+                      editorTheme === 'vs-dark'
+                        ? 'bg-[#27272a] text-amber-300 hover:bg-[#3f3f46] border border-[#3f3f46]'
+                        : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200 shadow-sm'
+                    }`}
                   >
-                    Code (Java/OOP)
+                    {editorTheme === 'vs-dark' ? (
+                      <>
+                        <Sun className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Light Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>VS Dark+</span>
+                      </>
+                    )}
                   </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setFormat('text')}
-                    className={`px-2.5 py-1 rounded-[4px] ${format === 'text' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'} transition-all`}
-                  >
-                    Design Spec (Text)
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setFormat('diagram')}
-                    className={`px-2.5 py-1 rounded-[4px] ${format === 'diagram' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'} transition-all`}
-                  >
-                    Diagram (Mermaid)
-                  </button>
+
+                  {/* Format Selector Tabs */}
+                  <div className={`flex items-center ${editorTheme === 'vs-dark' ? 'bg-[#27272a]' : 'bg-slate-200/70'} p-0.5 rounded-[6px] text-xs font-medium`} role="tablist">
+                    <button 
+                      type="button" 
+                      onClick={() => setFormat('code')}
+                      className={`px-2.5 py-1 rounded-[4px] ${
+                        format === 'code' 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+                      } transition-all`}
+                    >
+                      Code (Java/OOP)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setFormat('text')}
+                      className={`px-2.5 py-1 rounded-[4px] ${
+                        format === 'text' 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+                      } transition-all`}
+                    >
+                      Design Spec (Text)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setFormat('diagram')}
+                      className={`px-2.5 py-1 rounded-[4px] ${
+                        format === 'diagram' 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+                      } transition-all`}
+                    >
+                      Diagram (Mermaid)
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Code Textarea */}
-              <div className="relative">
-                <textarea 
-                  rows={18}
-                  className="w-full p-4 font-mono text-xs sm:text-[13px] leading-relaxed text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-600 resize-y border-none"
+              {/* VS Code Monaco Editor */}
+              <div className="relative min-h-[480px] w-full overflow-hidden">
+                <Editor
+                  height="480px"
+                  language={getEditorLanguage(format)}
                   value={code}
-                  onChange={e => setCode(e.target.value)}
-                  placeholder="Write your class design, interfaces, and methods here..."
-                  spellCheck={false}
+                  onChange={(val) => setCode(val || '')}
+                  theme={editorTheme}
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 13,
+                    fontFamily: "'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, 'Courier New', monospace",
+                    fontLigatures: true,
+                    lineNumbers: 'on',
+                    lineNumbersMinChars: 3,
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    wordWrap: 'on',
+                    tabSize: 4,
+                    insertSpaces: true,
+                    quickSuggestions: {
+                      other: true,
+                      comments: true,
+                      strings: true,
+                    },
+                    suggestOnTriggerCharacters: true,
+                    acceptSuggestionOnEnter: 'on',
+                    snippetSuggestions: 'top',
+                    formatOnType: true,
+                    formatOnPaste: true,
+                    cursorBlinking: 'smooth',
+                    smoothScrolling: true,
+                    padding: { top: 12, bottom: 12 },
+                    renderLineHighlight: 'all',
+                    bracketPairColorization: {
+                      enabled: true,
+                    },
+                  }}
+                  loading={
+                    <div className="flex items-center justify-center h-[480px] bg-slate-900 text-slate-300 text-xs font-mono gap-2">
+                      <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span>Initializing VS Code Monaco Editor...</span>
+                    </div>
+                  }
                 />
               </div>
 
               {/* Editor Action Strip */}
-              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Tier 1 Deterministic + Tier 2 Reasoning Evaluators Active</span>
+              <div className={`px-4 py-3 ${editorTheme === 'vs-dark' ? 'bg-[#18181b] border-t border-[#27272a]' : 'bg-slate-50 border-t border-slate-200'} flex flex-wrap items-center justify-between gap-3 transition-colors`}>
+                <div className={`text-xs ${editorTheme === 'vs-dark' ? 'text-slate-400' : 'text-slate-500'} flex items-center gap-1.5`}>
+                  <Zap className="w-3.5 h-3.5 text-green-500" />
+                  <span>VS Code Engine (IntelliSense active) • Tier 1 &amp; Tier 2 Evaluators</span>
                 </div>
                 <button 
                   type="button" 
