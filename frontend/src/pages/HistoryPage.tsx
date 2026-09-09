@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { History, RotateCcw, Plus, CheckCircle2, Clock, Check, AlertCircle } from 'lucide-react';
 import type { Attempt, Problem } from '../api';
+import { ThemeSelect } from '../components/ThemeSelect';
 
 interface HistoryPageProps {
   attempts: Attempt[];
@@ -86,16 +87,19 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 border border-slate-200 rounded-[8px] shadow-soft text-xs">
           <div className="flex items-center gap-2">
             <label className="font-medium text-slate-700">Filter by Problem:</label>
-            <select
+            <ThemeSelect
               value={filterProblemId}
-              onChange={e => setFilterProblemId(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-[6px] px-2.5 py-1 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
-            >
-              <option value="all">All Problems</option>
-              {problems.map(p => (
-                <option key={p.id} value={p.id}>{p.title}</option>
-              ))}
-            </select>
+              onChange={setFilterProblemId}
+              options={[
+                { value: 'all', label: 'All Problems' },
+                ...problems.map(p => ({
+                  value: p.id,
+                  label: p.title,
+                  badge: p.difficulty,
+                  badgeColor: p.difficulty === 'easy' ? 'green' as const : p.difficulty === 'medium' ? 'neutral' as const : 'amber' as const
+                }))
+              ]}
+            />
           </div>
           <span className="text-slate-400 text-[11px]">
             Showing {filtered.length} recorded attempts

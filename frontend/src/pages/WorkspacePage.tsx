@@ -16,6 +16,7 @@ import {
 import { api } from '../api';
 import type { Problem, Attempt, SubmissionPayload, EvaluationResult } from '../api';
 import { useLearnerId } from '../utils';
+import { ThemeSelect } from '../components/ThemeSelect';
 
 interface WorkspacePageProps {
   problem: Problem;
@@ -197,18 +198,19 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
             {allProblems.length > 0 && onSelectProblem && (
               <div className="flex items-center gap-2">
                 <label className="text-xs font-medium text-slate-500 hidden sm:inline">Active Problem:</label>
-                <select 
-                  className="text-xs sm:text-sm font-semibold text-slate-900 bg-slate-50 border border-slate-200 rounded-[6px] px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
+                <ThemeSelect
                   value={problem.id}
-                  onChange={e => {
-                    const found = allProblems.find(p => p.id === e.target.value);
+                  onChange={val => {
+                    const found = allProblems.find(p => p.id === val);
                     if (found) onSelectProblem(found);
                   }}
-                >
-                  {allProblems.map(p => (
-                    <option key={p.id} value={p.id}>{p.title}</option>
-                  ))}
-                </select>
+                  options={allProblems.map(p => ({
+                    value: p.id,
+                    label: p.title,
+                    badge: p.difficulty,
+                    badgeColor: p.difficulty === 'easy' ? 'green' : p.difficulty === 'medium' ? 'neutral' : 'amber'
+                  }))}
+                />
               </div>
             )}
             
