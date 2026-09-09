@@ -1,7 +1,8 @@
 // ── API Client ───────────────────────────────────────────────────────────────
 // All fetch calls go through this file. Keeps components clean.
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const RAW_URL = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || 'http://localhost:5000';
+const BASE_URL = RAW_URL.replace(/\/api\/?$/, '').replace(/\/+$/, '');
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
