@@ -1,0 +1,73 @@
+/* =============================================================
+   CipherSchools Design System — CSS Custom Properties (Tokens)
+   Single Source of Truth
+   ============================================================= */
+
+:root {
+  /* ── Colors: Green Accent Scale (600 = Primary) ──────────── */
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-500: #22c55e;
+  --green-600: #16a34a; /* Primary */
+  --green-700: #15803d;
+  --green-900: #14532d;
+
+  /* ── Neutrals: Green-tinted Slates (Never pure black) ────── */
+  --ink:         #0F172A; /* Headings & high-contrast text */
+  --text-body:   #475569; /* Body copy */
+  --text-muted:  #64748B; /* Secondary & helper text */
+  --border:      #E2E8F0; /* Clean light borders */
+  --surface-bg:  #F8FAFC; /* Page & section backgrounds */
+  --surface-card:#FFFFFF; /* White card & modal surface */
+  --surface-subtle: #F1F5F9; /* Subtle item hover/pill bg */
+
+  /* ── Difficulty Accents (Subtle Tints) ───────────────────── */
+  --diff-easy-bg:     #dcfce7;
+  --diff-easy-text:   #15803d;
+  --diff-easy-border: #bbf7d0;
+
+  --diff-med-bg:      #fef3c7;
+  --diff-med-text:    #b45309;
+  --diff-med-border:  #fde68a;
+
+  --diff-hard-bg:     #fee2e2;
+  --diff-hard-text:   #b91c1c;
+  --diff-hard-border: #fecaca;
+
+  /* ── Spacing Scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 px ─ */
+  --space-4:  4px;
+  --space-8:  8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  /* ── Radius Scale: 6px inputs, 8px cards/buttons, 999px pills */
+  --radius-input: 6px;
+  --radius-card:  8px;
+  --radius-pill:  999px;
+
+  /* ── Single Soft Shadow Utility (y≈2, blur≈8, ~5% black) ─── */
+  --shadow-soft: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 4px -1px rgba(15, 23, 42, 0.03);
+  --shadow-lift: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+
+  /* ── Type Scale: 12 / 14 / 16 / 20 / 24 / 32 / 40 / 48 px ─ */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  32px;
+  --text-3xl:  40px;
+  --text-4xl:  48px;
+
+  /* ── Font Family & Heading Letter Spacing ─────────────────── */
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --heading-letter-spacing: -0.02em;
+
+  /* ── Layout Heights ───────────────────────────────────────── */
+  --header-height: 64px;
+}

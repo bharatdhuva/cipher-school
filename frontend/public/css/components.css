@@ -1,0 +1,280 @@
+/* =============================================================
+   CipherSchools Design System — Component Styles & Utilities
+   Compliments Tailwind with custom tokens and states
+   ============================================================= */
+
+@layer base {
+  html {
+    font-family: var(--font-family);
+    color: var(--ink);
+    background-color: var(--surface-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-body);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--ink);
+    letter-spacing: var(--heading-letter-spacing);
+    font-weight: 600;
+  }
+
+  /* Accessible focus ring (2px green-600 outline) */
+  :focus-visible {
+    outline: 2px solid var(--green-600) !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* ── The ONE Soft Shadow Utility ────────────────────────────── */
+.shadow-soft {
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.hover-lift {
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift) !important;
+}
+
+/* ── Button Standards (Heights: 36px, 40px, 44px) ───────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  border-radius: var(--radius-card);
+  transition: all 140ms ease;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-sm {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.btn-md {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+.btn-lg {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+}
+
+.btn-primary {
+  background-color: var(--green-600);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  background-color: var(--green-700);
+  color: #FFFFFF;
+}
+.btn-primary:active {
+  background-color: var(--green-900);
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.btn-secondary:hover {
+  background-color: var(--surface-subtle);
+  border-color: #CBD5E1;
+  color: var(--ink);
+}
+.btn-secondary:active {
+  background-color: #E2E8F0;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-body);
+  border: 1px solid transparent;
+}
+.btn-ghost:hover {
+  background-color: var(--surface-subtle);
+  color: var(--ink);
+}
+
+/* ── Pill Badges ────────────────────────────────────────────── */
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  line-height: 1.4;
+}
+
+.badge-easy {
+  background-color: var(--diff-easy-bg);
+  color: var(--diff-easy-text);
+  border: 1px solid var(--diff-easy-border);
+}
+
+.badge-med {
+  background-color: var(--diff-med-bg);
+  color: var(--diff-med-text);
+  border: 1px solid var(--diff-med-border);
+}
+
+.badge-hard {
+  background-color: var(--diff-hard-bg);
+  color: var(--diff-hard-text);
+  border: 1px solid var(--diff-hard-border);
+}
+
+.badge-neutral {
+  background-color: var(--surface-subtle);
+  color: var(--text-body);
+  border: 1px solid var(--border);
+}
+
+.badge-green {
+  background-color: var(--green-100);
+  color: var(--green-700);
+  border: 1px solid var(--green-200);
+}
+
+/* ── ⌘K Command Palette Overlay & Animation ─────────────────── */
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.palette-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.palette-modal {
+  width: 100%;
+  max-width: 640px;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.15), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-8px) scale(0.98);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.palette-backdrop.active .palette-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Mobile full-screen palette */
+@media (max-width: 639px) {
+  .palette-backdrop {
+    padding-top: 0;
+    align-items: stretch;
+  }
+  .palette-modal {
+    max-width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: background 100ms ease;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.palette-item:hover,
+.palette-item.selected {
+  background-color: var(--green-50);
+  color: var(--green-900);
+}
+
+.palette-item.selected .palette-item-icon {
+  color: var(--green-600);
+}
+
+/* ── Keyboard Shortcut Indicator ────────────────────────────── */
+kbd {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  line-height: 1;
+}
+
+/* ── Nav Link Active State ──────────────────────────────────── */
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-body);
+  transition: color 140ms ease;
+  height: 64px;
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--ink);
+}
+.nav-link.active {
+  color: var(--ink);
+  font-weight: 600;
+}
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--green-600);
+  border-radius: 2px 2px 0 0;
+}
