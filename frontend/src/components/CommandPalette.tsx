@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Terminal, ArrowRight, Layers, CheckCircle2, History, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Terminal, ArrowRight, Layers, History, X } from 'lucide-react';
 import type { PageView } from './Navbar';
 import type { Problem } from '../api';
 
@@ -99,26 +99,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
           <button
             type="button"
-            onClick={() => { onSelectPage('architecture'); onClose(); }}
+            onClick={() => { onSelectPage('workspace'); onClose(); }}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 6, textAlign: 'left', fontSize: 13 }}
             className="card"
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Layers size={14} style={{ color: 'var(--green-600)' }} />
-              <span style={{ fontWeight: 600, color: 'var(--slate-900)' }}>Domain Architecture &amp; UML (25%)</span>
-            </div>
-            <ArrowRight size={14} style={{ color: 'var(--slate-400)' }} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { onSelectPage('tests'); onClose(); }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 6, textAlign: 'left', fontSize: 13 }}
-            className="card"
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <CheckCircle2 size={14} style={{ color: 'var(--green-600)' }} />
-              <span style={{ fontWeight: 600, color: 'var(--slate-900)' }}>Automated Test Suite (10 Tests)</span>
+              <span style={{ fontWeight: 600, color: 'var(--slate-900)' }}>Practice Workspace</span>
             </div>
             <ArrowRight size={14} style={{ color: 'var(--slate-400)' }} />
           </button>

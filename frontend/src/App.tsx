@@ -12,8 +12,6 @@ import { HomePage } from './pages/HomePage';
 import { ProblemsPage } from './pages/ProblemsPage';
 import { WorkspacePage } from './pages/WorkspacePage';
 import { HistoryPage } from './pages/HistoryPage';
-import { ArchitecturePage } from './pages/ArchitecturePage';
-import { TestsPage } from './pages/TestsPage';
 
 export function App() {
   const learnerId = useLearnerId();
@@ -203,18 +201,6 @@ export function App() {
                 problems={problems}
                 onRetryProblem={handleSelectProblem}
                 onNewAttempt={() => setCurrentPage('workspace')}
-              />
-            )}
-
-            {currentPage === 'architecture' && (
-              <ArchitecturePage
-                onStartPractice={() => setCurrentPage('workspace')}
-              />
-            )}
-
-            {currentPage === 'tests' && (
-              <TestsPage
-                problems={problems}
               />
             )}
           </motion.div>

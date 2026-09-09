@@ -42,7 +42,6 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
   const [status, setStatus] = useState<'draft' | 'submitting' | 'evaluating' | 'evaluated' | 'fallback' | 'failed'>('draft');
   const [evalStep, setEvalStep] = useState(1);
   const [evalResult, setEvalResult] = useState<EvaluationResult | null>(null);
-  const [simulateTimeout, setSimulateTimeout] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Deterministic analysis state
@@ -116,33 +115,8 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
       const { attempt } = await api.createAttempt(learnerId, problem.id);
       setStatus('evaluating');
 
-      const timer1 = setTimeout(() => setEvalStep(2), 500);
-      const timer2 = setTimeout(() => setEvalStep(3), 1000);
-
-      // Fallback simulation for Design Question #5
-      if (simulateTimeout) {
-        setTimeout(() => {
-          clearTimeout(timer1);
-          clearTimeout(timer2);
-          setStatus('fallback');
-          const fallbackRes: EvaluationResult = {
-            attemptId: attempt.id,
-            evaluatorName: 'DeterministicStructuralEvaluator (Fallback Mode)',
-            overallScore: det.score / 10,
-            llmUnavailable: true,
-            summary: 'AI Reasoning Service timed out after 5000ms SLA. Platform gracefully fell back to Tier-1 deterministic structural audit.',
-            dimensions: [
-              { dimension: 'Domain Entities & SRP', score: Math.round(det.score * 0.9) / 10, maxScore: 10, reasoning: 'Found clean class boundaries with decoupled responsibilities.' },
-              { dimension: 'Abstractions & Interfaces', score: Math.round(det.score * 0.92) / 10, maxScore: 10, reasoning: 'Interface seams detected for swappable strategies.' },
-              { dimension: 'Encapsulation', score: Math.round(det.score * 0.88) / 10, maxScore: 10, reasoning: 'Fields properly scoped without unencapsulated public state.' },
-              { dimension: 'Concurrency Invariants', score: 8.5, maxScore: 10, reasoning: 'Thread synchronization constructs prevent data corruption.' }
-            ],
-            createdAt: new Date().toISOString()
-          };
-          setEvalResult(fallbackRes);
-        }, 1300);
-        return;
-      }
+      setTimeout(() => setEvalStep(2), 500);
+      setTimeout(() => setEvalStep(3), 1000);
 
       // Prepare payload
       const payload: SubmissionPayload = {
@@ -255,17 +229,6 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Failure Simulation Toggle (Design Question #5) */}
-            <label className="hidden md:flex items-center gap-2 text-xs text-slate-500 cursor-pointer bg-slate-50 px-2.5 py-1.5 rounded-[6px] border border-slate-200 hover:bg-slate-100 transition-colors" title="Simulate AI service timeout to test Tier-1 deterministic fallback (Design Question #5)">
-              <input 
-                type="checkbox" 
-                checked={simulateTimeout}
-                onChange={e => setSimulateTimeout(e.target.checked)}
-                className="rounded border-slate-300 text-green-600 focus:ring-green-600 cursor-pointer" 
-              />
-              <span>Simulate AI Timeout (Fallback Mode)</span>
-            </label>
-
             <button 
               type="button" 
               onClick={onViewHistory}
@@ -451,15 +414,14 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
               </div>
             )}
 
-            {/* Fallback Alert Banner (Design Question #5) */}
             {status === 'fallback' && (
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-[8px] space-y-2 text-xs text-amber-900">
                 <div className="flex items-center gap-2 font-semibold text-amber-800">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  <span>Design Question #5 Demonstration: AI Evaluation Timed Out (Graceful Fallback Active)</span>
+                  <span>AI Reasoning Unavailable · Tier-1 Static Structural Evaluation Active</span>
                 </div>
                 <p className="text-amber-700 leading-relaxed pl-6">
-                  The AI reasoning service did not respond within the 5000ms SLA. The platform gracefully fell back to <strong>Tier-1 Deterministic Static Evaluation</strong> without crashing or freezing the learner's experience. You can inspect structural checks below or retry.
+                  The AI reasoning service was delayed or unavailable. The platform has gracefully evaluated your design using <strong>Tier-1 Deterministic Static Evaluation</strong> without interrupting your session.
                 </p>
               </div>
             )}

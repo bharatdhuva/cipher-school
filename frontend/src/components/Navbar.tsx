@@ -1,7 +1,7 @@
 import React from 'react';
-import { Search, CheckCircle2, History } from 'lucide-react';
+import { Search, History } from 'lucide-react';
 
-export type PageView = 'home' | 'problems' | 'workspace' | 'history' | 'architecture' | 'tests';
+export type PageView = 'home' | 'problems' | 'workspace' | 'history';
 
 interface NavbarProps {
   currentPage: PageView;
@@ -35,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {/* Desktop Nav Links (Mapped 1:1 to Assignment Loop & Deliverables) */}
+          {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-5 h-full" aria-label="Main Navigation">
             <button 
               type="button"
@@ -72,39 +72,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </span>
             </button>
-            <button 
-              type="button"
-              onClick={() => onNavigate('architecture')} 
-              className={`nav-link ${currentPage === 'architecture' ? 'active' : ''}`}
-            >
-              Domain Architecture
-            </button>
-            <button 
-              type="button"
-              onClick={() => onNavigate('tests')} 
-              className={`nav-link ${currentPage === 'tests' ? 'active' : ''}`}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-green-600" /> Test Suite
-              </span>
-            </button>
           </nav>
         </div>
 
         {/* Right: Search (⌘K), User Profile */}
         <div className="flex items-center gap-3">
           
-          {/* ⌘K Search Trigger Button */}
+          {/* Search Trigger Button */}
           <button 
             type="button" 
             onClick={onOpenPalette}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 rounded-[8px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600" 
-            aria-label="Search LLD problems or open commands (Cmd+K)"
+            className="flex items-center gap-2 px-3.5 py-1.5 text-xs text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 rounded-[8px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600" 
+            aria-label="Search LLD problems"
           >
             <Search size={14} className="text-slate-400" />
             <span className="hidden sm:inline">Search LLD problems...</span>
             <span className="sm:hidden">Search</span>
-            <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium text-slate-500 bg-white border border-slate-200 rounded">⌘K</kbd>
           </button>
 
           {/* User Chip with Avatar + Evaluator/Learner Badge */}
