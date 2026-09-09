@@ -336,49 +336,59 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
             <div className={`border ${editorTheme === 'vs-dark' ? 'bg-[#1e1e1e] border-[#333333]' : 'bg-white border-slate-200'} rounded-[8px] shadow-soft overflow-hidden flex flex-col transition-colors`}>
               
               {/* Editor Header & Format Switcher */}
-              <div className={`px-4 py-2.5 ${editorTheme === 'vs-dark' ? 'bg-[#18181b] border-b border-[#27272a]' : 'bg-slate-50 border-b border-slate-200'} flex flex-wrap items-center justify-between gap-2 transition-colors`}>
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-                  <span className={`text-xs font-mono font-medium ml-2 ${editorTheme === 'vs-dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                    {format === 'code' ? 'Solution.java (Class Abstractions)' : format === 'text' ? 'DesignSpec.md' : 'Model.mermaid'}
+              <div className={`px-4 py-2 min-h-[44px] ${editorTheme === 'vs-dark' ? 'bg-[#18181b] border-b border-[#27272a]' : 'bg-slate-50 border-b border-slate-200'} flex items-center justify-between gap-3 transition-colors`}>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-400 shrink-0"></span>
+                  <span className={`text-xs font-mono font-medium ml-1.5 ${editorTheme === 'vs-dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                    {format === 'code' ? 'Solution.java' : format === 'text' ? 'DesignSpec.md' : 'Model.mermaid'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {/* Theme Switcher */}
-                  <button
-                    type="button"
-                    onClick={() => setEditorTheme(prev => prev === 'vs-dark' ? 'vs' : 'vs-dark')}
-                    title="Toggle VS Code Light / Dark Theme"
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] text-xs font-medium transition-all ${
-                      editorTheme === 'vs-dark'
-                        ? 'bg-[#27272a] text-amber-300 hover:bg-[#3f3f46] border border-[#3f3f46]'
-                        : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200 shadow-sm'
-                    }`}
-                  >
-                    {editorTheme === 'vs-dark' ? (
-                      <>
-                        <Sun className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Light Mode</span>
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="w-3.5 h-3.5 text-indigo-500" />
-                        <span>VS Dark+</span>
-                      </>
-                    )}
-                  </button>
+                <div className="flex items-center gap-2.5 shrink-0">
+                  {/* Theme Switcher Segmented Control (Zero layout shift) */}
+                  <div className={`flex items-center p-0.5 rounded-[6px] h-7 shrink-0 text-xs font-medium border ${
+                    editorTheme === 'vs-dark' ? 'bg-[#27272a] border-[#3f3f46]' : 'bg-slate-200/80 border-slate-200'
+                  }`}>
+                    <button
+                      type="button"
+                      onClick={() => setEditorTheme('vs')}
+                      className={`px-2 h-full flex items-center gap-1 rounded-[4px] transition-all ${
+                        editorTheme === 'vs' 
+                          ? 'bg-white text-slate-900 shadow-xs font-semibold' 
+                          : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+                      }`}
+                      title="VS Code Light Theme"
+                    >
+                      <Sun className="w-3 h-3 text-amber-500 shrink-0" />
+                      <span>Light</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditorTheme('vs-dark')}
+                      className={`px-2 h-full flex items-center gap-1 rounded-[4px] transition-all ${
+                        editorTheme === 'vs-dark' 
+                          ? 'bg-[#3f3f46] text-amber-300 shadow-xs font-semibold' 
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                      title="VS Code Dark Theme"
+                    >
+                      <Moon className="w-3 h-3 text-indigo-400 shrink-0" />
+                      <span>Dark</span>
+                    </button>
+                  </div>
 
                   {/* Format Selector Tabs */}
-                  <div className={`flex items-center ${editorTheme === 'vs-dark' ? 'bg-[#27272a]' : 'bg-slate-200/70'} p-0.5 rounded-[6px] text-xs font-medium`} role="tablist">
+                  <div className={`flex items-center p-0.5 rounded-[6px] h-7 shrink-0 text-xs font-medium border ${
+                    editorTheme === 'vs-dark' ? 'bg-[#27272a] border-[#3f3f46]' : 'bg-slate-200/80 border-slate-200'
+                  }`} role="tablist">
                     <button 
                       type="button" 
                       onClick={() => setFormat('code')}
-                      className={`px-2.5 py-1 rounded-[4px] ${
+                      className={`px-2.5 h-full flex items-center rounded-[4px] ${
                         format === 'code' 
-                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-xs font-semibold' : 'bg-white text-slate-900 shadow-xs font-semibold') 
                           : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
                       } transition-all`}
                     >
@@ -387,20 +397,20 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
                     <button 
                       type="button" 
                       onClick={() => setFormat('text')}
-                      className={`px-2.5 py-1 rounded-[4px] ${
+                      className={`px-2.5 h-full flex items-center rounded-[4px] ${
                         format === 'text' 
-                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-xs font-semibold' : 'bg-white text-slate-900 shadow-xs font-semibold') 
                           : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
                       } transition-all`}
                     >
-                      Design Spec (Text)
+                      Design Spec
                     </button>
                     <button 
                       type="button" 
                       onClick={() => setFormat('diagram')}
-                      className={`px-2.5 py-1 rounded-[4px] ${
+                      className={`px-2.5 h-full flex items-center rounded-[4px] ${
                         format === 'diagram' 
-                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-sm' : 'bg-white text-slate-900 shadow-sm') 
+                          ? (editorTheme === 'vs-dark' ? 'bg-[#3f3f46] text-white shadow-xs font-semibold' : 'bg-white text-slate-900 shadow-xs font-semibold') 
                           : (editorTheme === 'vs-dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
                       } transition-all`}
                     >
