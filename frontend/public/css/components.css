@@ -28,10 +28,16 @@
     font-weight: 600;
   }
 
-  /* Accessible focus ring (2px green-600 outline) */
-  :focus-visible {
+  /* Accessible focus ring on buttons and interactive links (NOT on text inputs) */
+  button:focus-visible, a:focus-visible {
     outline: 2px solid var(--green-600) !important;
     outline-offset: 2px !important;
+  }
+
+  input, textarea, select, input:focus, input:focus-visible, textarea:focus, textarea:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+    border: none;
   }
 }
 

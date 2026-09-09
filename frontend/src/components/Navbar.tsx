@@ -145,6 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Search LLD problems..."
                 aria-label="Search LLD problems with debouncing"
+                style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
               />
               {isDebouncing && (
                 <Loader2 size={13} className="text-green-600 animate-spin flex-shrink-0" />

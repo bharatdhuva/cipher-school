@@ -61,6 +61,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             value={query}
             onChange={e => setQuery(e.target.value)}
             autoFocus
+            style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
           />
           {isDebouncing && <Loader2 size={16} className="text-green-600 animate-spin flex-shrink-0" />}
           <button type="button" onClick={onClose} style={{ color: 'var(--slate-400)', padding: 4 }}>

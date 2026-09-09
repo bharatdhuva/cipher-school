@@ -90,13 +90,13 @@ button {
   font-family: inherit;
 }
 
-input, textarea, select {
-  font-family: inherit;
-  outline: none;
-}
-
-input:focus, textarea:focus, select:focus {
+input, textarea, select,
+input:focus, input:focus-visible,
+textarea:focus, textarea:focus-visible,
+select:focus, select:focus-visible {
   outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
 }
 
 /* ── Unified Search Box Components ──────────────────────────────────────── */
@@ -122,11 +122,14 @@ input:focus, textarea:focus, select:focus {
   background: var(--white) !important;
 }
 
-.search-box-wrapper input {
+.search-box-wrapper input,
+.search-box-wrapper input:focus,
+.search-box-wrapper input:focus-visible {
   flex: 1;
   background: transparent !important;
   border: none !important;
   outline: none !important;
+  outline-offset: 0 !important;
   box-shadow: none !important;
   font-size: 13px;
   color: var(--slate-900);

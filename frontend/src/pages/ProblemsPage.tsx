@@ -69,6 +69,7 @@ export const ProblemsPage: React.FC<ProblemsPageProps> = ({
               value={search}
               onChange={e => setSearch(e.target.value)}
               aria-label="Search problems"
+              style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
             />
             {isDebouncing && (
               <span className="flex items-center gap-1 text-[11px] text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">
