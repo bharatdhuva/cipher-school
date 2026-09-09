@@ -1,5 +1,6 @@
-import React from 'react';
-import { ArrowRight, Search, History, Layers, Network, GitFork, ShieldAlert } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ArrowRight, Search, History, Layers, Network, GitFork, ShieldAlert, X, Loader2 } from 'lucide-react';
+import { useDebounce } from '../utils';
 import type { PageView } from '../components/Navbar';
 import type { Problem } from '../api';
 
@@ -7,15 +8,59 @@ interface HomePageProps {
   problems: Problem[];
   onNavigate: (page: PageView) => void;
   onSelectProblem: (problem: Problem) => void;
-  onOpenPalette: () => void;
+  onOpenPalette?: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   problems,
   onNavigate,
-  onSelectProblem,
-  onOpenPalette
+  onSelectProblem
 }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const debouncedQuery = useDebounce(searchQuery, 250);
+  const isDebouncing = searchQuery !== debouncedQuery;
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredProblems = debouncedQuery.trim()
+    ? problems.filter(p =>
+        p.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+        p.prompt.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+        p.expectedConcepts.some(c => c.toLowerCase().includes(debouncedQuery.toLowerCase()))
+      )
+    : [];
+
+  const handleSelect = (prob: Problem) => {
+    setIsDropdownOpen(false);
+    setSearchQuery('');
+    onSelectProblem(prob);
+    onNavigate('workspace');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setIsDropdownOpen(false);
+    } else if (e.key === 'Enter') {
+      if (filteredProblems.length > 0) {
+        handleSelect(filteredProblems[0]);
+      } else {
+        onNavigate('problems');
+        setIsDropdownOpen(false);
+      }
+    }
+  };
+
   const parkingLot = problems.find(p => p.id === 'parking-lot') || problems[0];
   const elevator = problems.find(p => p.id === 'elevator-system') || problems[1];
   const vendingMachine = problems.find(p => p.id === 'vending-machine') || problems[2];
@@ -44,20 +89,102 @@ export const HomePage: React.FC<HomePageProps> = ({
               A focused practice experience that helps learners design real-world systems like Parking Lot, Elevator, and Vending Machine — verifying responsibilities, abstractions, and trade-offs.
             </p>
 
-            {/* ⌘K Search Trigger Input Box */}
-            <div className="pt-2 max-w-xl mx-auto">
-              <button 
-                type="button" 
-                onClick={onOpenPalette}
-                className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-white text-slate-500 hover:text-slate-900 border border-slate-200 hover:border-slate-300 rounded-[8px] shadow-soft transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 cursor-pointer text-left"
-                aria-label="Open command palette search"
-              >
-                <div className="flex items-center gap-3">
-                  <Search className="w-5 h-5 text-slate-400" />
-                  <span className="text-sm">Search LLD blueprints, problems, or attempt history...</span>
+            {/* Interactive Debounced Search Box */}
+            <div ref={searchRef} className="pt-2 max-w-xl mx-auto relative text-left">
+              <div className="search-box-wrapper shadow-soft" style={{ padding: '10px 16px', background: 'var(--slate-50)' }}>
+                <Search className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search LLD blueprints, problems, or concepts..."
+                  value={searchQuery}
+                  onChange={e => {
+                    setSearchQuery(e.target.value);
+                    setIsDropdownOpen(true);
+                  }}
+                  onFocus={() => {
+                    if (searchQuery.trim().length > 0) setIsDropdownOpen(true);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  aria-label="Search LLD blueprints"
+                  style={{ outline: 'none', border: 'none', boxShadow: 'none', fontSize: '14px' }}
+                />
+                {isDebouncing && (
+                  <Loader2 className="w-4 h-4 text-green-600 animate-spin flex-shrink-0" />
+                )}
+                {searchQuery && !isDebouncing && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setIsDropdownOpen(false);
+                    }}
+                    className="text-slate-400 hover:text-slate-600 p-0.5"
+                    aria-label="Clear search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Debounced Search Results Dropdown */}
+              {isDropdownOpen && searchQuery.trim().length > 0 && (
+                <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-[8px] shadow-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="p-2.5 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium bg-slate-50/50">
+                    <span>
+                      {isDebouncing ? 'Searching...' : `${filteredProblems.length} matching problem${filteredProblems.length === 1 ? '' : 's'}`}
+                    </span>
+                    <span className="text-[10px] text-slate-400">250ms debounce</span>
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto p-2 space-y-1">
+                    {filteredProblems.length > 0 ? (
+                      filteredProblems.map(prob => (
+                        <button
+                          key={prob.id}
+                          type="button"
+                          onClick={() => handleSelect(prob)}
+                          className="w-full text-left p-3 rounded-[6px] hover:bg-slate-50 transition-colors flex items-start justify-between gap-3 group"
+                        >
+                          <div className="space-y-1 min-w-0">
+                            <div className="text-sm font-semibold text-slate-900 group-hover:text-green-700 truncate">
+                              {prob.title}
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`pill-badge text-[10px] py-0 px-1.5 ${
+                                prob.difficulty === 'easy' ? 'badge-green' :
+                                prob.difficulty === 'medium' ? 'badge-neutral' : 'badge-amber'
+                              }`}>
+                                {prob.difficulty}
+                              </span>
+                              <span className="text-xs text-slate-400 truncate max-w-[280px]">
+                                {prob.expectedConcepts.slice(0, 3).join(' · ')}
+                              </span>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-green-600 group-hover:translate-x-0.5 transition-all mt-1 flex-shrink-0" />
+                        </button>
+                      ))
+                    ) : !isDebouncing ? (
+                      <div className="p-5 text-center text-xs text-slate-500">
+                        No problems found matching "<span className="font-semibold text-slate-700">{debouncedQuery}</span>".
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="p-2.5 bg-slate-50 border-t border-slate-100 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onNavigate('problems');
+                        setIsDropdownOpen(false);
+                      }}
+                      className="text-xs font-medium text-green-700 hover:text-green-800"
+                    >
+                      View all problems in directory →
+                    </button>
+                  </div>
                 </div>
-                <kbd className="text-xs px-2 py-0.5 bg-white border border-slate-200 rounded text-slate-400 font-medium">⌘K</kbd>
-              </button>
+              )}
             </div>
 
             {/* CTAs */}
