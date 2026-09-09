@@ -53,17 +53,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       <div className="palette-modal" onClick={e => e.stopPropagation()}>
         
         {/* Search Header Input */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid var(--slate-200)', gap: 10 }}>
-          <Search size={18} style={{ color: 'var(--slate-400)' }} />
+        <div className="search-box-wrapper palette-search-header">
+          <Search size={18} className="text-slate-400 flex-shrink-0" />
           <input
             type="text"
-            placeholder="Search LLD problems, blueprints, or deliverables..."
+            placeholder="Search LLD problems, blueprints, or actions..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             autoFocus
-            style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14, color: 'var(--slate-900)' }}
           />
-          {isDebouncing && <Loader2 size={16} className="text-green-600 animate-spin" />}
+          {isDebouncing && <Loader2 size={16} className="text-green-600 animate-spin flex-shrink-0" />}
           <button type="button" onClick={onClose} style={{ color: 'var(--slate-400)', padding: 4 }}>
             <X size={16} />
           </button>

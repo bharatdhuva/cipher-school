@@ -61,14 +61,14 @@ export const ProblemsPage: React.FC<ProblemsPageProps> = ({
 
         {/* Filter & Search Bar */}
         <div className="bg-white p-4 border border-slate-200 rounded-[8px] shadow-soft flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5 flex-1 min-w-[260px]">
+          <div className="search-box-wrapper flex-1 min-w-[260px] max-w-2xl">
             <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
             <input
               type="text"
               placeholder="Search problems by name, pattern, or requirements..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full text-xs sm:text-sm text-slate-900 bg-transparent focus:outline-none placeholder-slate-400"
+              aria-label="Search problems"
             />
             {isDebouncing && (
               <span className="flex items-center gap-1 text-[11px] text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">

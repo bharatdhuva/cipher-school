@@ -130,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           {/* Debounced Search Bar with Live Dropdown */}
           <div ref={searchRef} className="relative">
-            <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-600 bg-slate-50 hover:bg-slate-100/80 focus-within:bg-white focus-within:ring-2 focus-within:ring-green-600 focus-within:border-green-600 border border-slate-200 rounded-[8px] transition-all w-44 sm:w-64 lg:w-72">
+            <div className="search-box-wrapper navbar-search-box">
               <Search size={14} className="text-slate-400 flex-shrink-0" />
               <input
                 type="text"
@@ -144,7 +144,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search LLD problems..."
-                className="w-full bg-transparent border-none outline-none text-xs text-slate-900 placeholder:text-slate-400"
                 aria-label="Search LLD problems with debouncing"
               />
               {isDebouncing && (
