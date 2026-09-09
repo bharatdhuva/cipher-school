@@ -144,8 +144,9 @@ export function App() {
       <Navbar
         currentPage={currentPage}
         onNavigate={setCurrentPage}
-        onOpenPalette={() => setPaletteOpen(true)}
         attemptCount={attempts.length}
+        problems={problems}
+        onSelectProblem={handleSelectProblem}
       />
 
       {/* ⌘K Command Palette Modal */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Search, History } from 'lucide-react';
+import { ArrowRight, Search, History, Loader2, X } from 'lucide-react';
+import { useDebounce } from '../utils';
 import type { Problem } from '../api';
 
 interface ProblemsPageProps {
@@ -14,12 +15,16 @@ export const ProblemsPage: React.FC<ProblemsPageProps> = ({
   onViewHistory
 }) => {
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 250);
+  const isDebouncing = search !== debouncedSearch;
   const [difficultyFilter, setDifficultyFilter] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
 
   const filtered = problems.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.prompt.toLowerCase().includes(search.toLowerCase()) ||
-      p.expectedConcepts.some(c => c.toLowerCase().includes(search.toLowerCase()));
+    const query = debouncedSearch.toLowerCase().trim();
+    const matchesSearch = !query ||
+      p.title.toLowerCase().includes(query) ||
+      p.prompt.toLowerCase().includes(query) ||
+      p.expectedConcepts.some(c => c.toLowerCase().includes(query));
     const matchesDiff = difficultyFilter === 'all' || p.difficulty === difficultyFilter;
     return matchesSearch && matchesDiff;
   });
@@ -57,7 +62,7 @@ export const ProblemsPage: React.FC<ProblemsPageProps> = ({
         {/* Filter & Search Bar */}
         <div className="bg-white p-4 border border-slate-200 rounded-[8px] shadow-soft flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 flex-1 min-w-[260px]">
-            <Search className="w-4 h-4 text-slate-400" />
+            <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
             <input
               type="text"
               placeholder="Search problems by name, pattern, or requirements..."
@@ -65,6 +70,22 @@ export const ProblemsPage: React.FC<ProblemsPageProps> = ({
               onChange={e => setSearch(e.target.value)}
               className="w-full text-xs sm:text-sm text-slate-900 bg-transparent focus:outline-none placeholder-slate-400"
             />
+            {isDebouncing && (
+              <span className="flex items-center gap-1 text-[11px] text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">
+                <Loader2 className="w-3 h-3 animate-spin text-green-600" />
+                <span className="hidden sm:inline">Searching...</span>
+              </span>
+            )}
+            {search && !isDebouncing && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="text-slate-400 hover:text-slate-600 p-1"
+                aria-label="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-xs">

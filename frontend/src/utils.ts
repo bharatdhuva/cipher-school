@@ -2,6 +2,23 @@ import { useEffect, useState } from 'react';
 import { api } from './api';
 import type { Attempt } from './api';
 
+// Debounce hook for responsive search filtering
+export function useDebounce<T>(value: T, delayMs = 250): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delayMs);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delayMs]);
+
+  return debouncedValue;
+}
+
 // Generate a stable UUID per browser session, stored in localStorage
 export function useLearnerId(): string {
   const [learnerId] = useState<string>(() => {

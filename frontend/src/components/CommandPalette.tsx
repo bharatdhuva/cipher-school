@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Search, Terminal, ArrowRight, Layers, History, X } from 'lucide-react';
+import { Search, Terminal, ArrowRight, Layers, History, X, Loader2 } from 'lucide-react';
+import { useDebounce } from '../utils';
 import type { PageView } from './Navbar';
 import type { Problem } from '../api';
 
@@ -19,6 +20,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   problems
 }) => {
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 200);
+  const isDebouncing = query !== debouncedQuery;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,11 +40,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   if (!isOpen) return null;
 
-  const filteredProblems = problems.filter(p => 
-    p.title.toLowerCase().includes(query.toLowerCase()) ||
-    p.prompt.toLowerCase().includes(query.toLowerCase()) ||
-    p.expectedConcepts.some(c => c.toLowerCase().includes(query.toLowerCase()))
-  );
+  const filteredProblems = problems.filter(p => {
+    const q = debouncedQuery.toLowerCase().trim();
+    return !q ||
+      p.title.toLowerCase().includes(q) ||
+      p.prompt.toLowerCase().includes(q) ||
+      p.expectedConcepts.some(c => c.toLowerCase().includes(q));
+  });
 
   return (
     <div className="palette-backdrop" onClick={onClose}>
@@ -58,6 +63,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             autoFocus
             style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14, color: 'var(--slate-900)' }}
           />
+          {isDebouncing && <Loader2 size={16} className="text-green-600 animate-spin" />}
           <button type="button" onClick={onClose} style={{ color: 'var(--slate-400)', padding: 4 }}>
             <X size={16} />
           </button>
