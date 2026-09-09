@@ -170,7 +170,7 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
               setStatus('failed');
               setErrorMsg(polled.failureReason || 'Evaluation completed without result.');
             }
-          } else if (pollCount > 10) {
+          } else if (pollCount > 30) {
             clearInterval(pollInterval);
             setStatus('fallback');
             setEvalResult({
